@@ -1,0 +1,27 @@
+4) Se crearon dos implementaciones de Thread::Join.
+Modificando la linea del threads/Makefile:
+    DEFINES      = -DTHREADS -DDFS_TICKS_FIX -DSINGLETHREAD_JOIN
+A
+    DEFINES      = -DTHREADS -DDFS_TICKS_FIX
+Se puede usar la segunda version que admite joiner N a uno, y usa
+condiciones, tambien habilita el test 7 que la testea.
+
+5) b) Los locks los tiene un solo hilo a la vez (por definición).
+Entonces solucionamos la inversion de prioridad por medio de la
+herencia de prioridades, quien tiene el lock tiene una prioridad
+igual al maximo de las prioridades de los hilos que esperan
+los locks que tiene y su propia prioridad.
+Los canales usan locks, asi que el problema ya esta solucionado.
+
+Para los semaforos ningun thread 'tiene' el semaforo.
+Para saber si ocurre una inversion de prioridades, debe saberse
+si el hilo de baja prioridad (ejecutandose) va a aumentar el
+semaforo en el futuro, en un entorno de multiples hilos; una
+vez que se tiene esa información se podria hacer una herencia
+de prioridades. Sin embargo, como predecir si va a ocurrir un
+evento en el futuro para un hilo arbitrario es un problema que
+solo se puede predecir ejecutando la maquina (o una simulacion
+equivalente) hasta que esta condicion se cumpla, no se puede
+predecir si el hilo va a aumentar el semaforo (si no lo aumenta
+la simulacion es infinita, si lo aumenta la simulacion es siempre
+prohibitivamente cara).

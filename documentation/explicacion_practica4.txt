@@ -1,0 +1,126 @@
+2) Para el programa memory_test_a creado especificamente para este problema.
+El programa pide 100kB de memoria estatica, y escribe en orden la posicion
+de cada elemento en cada byte (ignorando unsigned char overflow).
+
+Con una TLB con 32 entradas:
+
+    ❯ vmem/nachos -x userland/memory_test_a
+    Machine halting!
+    ...
+    Paging: faults 855
+    Paging: hits 2560854
+    Paging: hit ratio 99.97
+    ...
+
+Como podemos ver la cantidad de paging faults es increiblemente baja.
+
+Con una TLB con 64 entradas:
+    ❯ vmem/nachos -x userland/memory_test_a
+    Machine halting!
+
+    ...
+    Paging: faults 829
+    Paging: hits 2560841
+    Paging: hit ratio 99.97
+    ...
+Como podemos ver la cantidad de paging faults sigue siendo increiblemente baja.
+Y no hay mejoras en el procentaje.
+
+Como ejemplo extremo, tenemos una TLB size de 2:
+    ❯ vmem/nachos -x userland/memory_test_a
+    Machine halting!
+
+    ...
+    Paging: faults 307157
+    Paging: hits 2764797
+    Paging: hit ratio 88.89
+    ...
+
+Donde empeora un poco las faults.
+
+
+Otro programa es el memory_test_b, que es como el a pero tiene accesos
+al azar en memoria
+
+Para TLB de 32 entradas:
+    ❯ vmem/nachos -x userland/memory_test_b
+    Machine halting!
+
+    ...
+    Paging: faults 121116
+    Paging: hits 14544864
+    Paging: hit ratio 99.17
+    ...
+
+Como podemos ver el acceso azarozo genera que el hit ratio disminuya.
+
+Para una TLB con 64 entradas:
+    ❯ vmem/nachos -x userland/memory_test_b
+    Machine halting!
+
+    ...
+    Paging: faults 104602
+    Paging: hits 14536591
+    Paging: hit ratio 99.28
+    ...
+
+Sin embargo, con el doble de entradas el porcentaje de aciertos no
+mejora mucho.
+
+Para referencia, con 2 entradas:
+    ❯ vmem/nachos -x userland/memory_test_b
+    Machine halting!
+
+    ...
+    Paging: faults 2048005
+    Paging: hits 15462433
+    Paging: hit ratio 86.75
+    ...
+Aca el hit rate disminuye como para el programa a,
+pero sigue siendo sustancialmente alta.
+
+
+Por lo visto en estos tests, se recomienda usar un TLB
+del tamaño mas grande posible, pero ante restricciones,
+por costos, se puede achicar hasta 32 entradas sin
+mayor problema, y los aumentos generan ventajas
+decrecientes a partir de 32 entradas.
+
+
+6)
+Para este test se usa el programa memory_test_c.
+memory_test_c accede secuencialmente un byte
+de cada pagina de un array.
+
+FIFO:
+
+    ❯ vmem/nachos -x userland/memory_test_c
+    Machine halting!
+
+    ...
+    Swapping: save 751 pages to swap
+    Swapping: recovery 24 pages from swap
+    ...
+
+reloj:
+
+    ❯ vmem/nachos -x userland/memory_test_c
+    Machine halting!
+
+    ...
+    Swapping: save 750 pages to swap
+    Swapping: recovery 35 pages from swap
+    ...
+
+Para este programa, calcular el algoritmo optimo es muy simple,
+ya que lectura es secuencial sobre el array y hay demand loading.
+El algoritmo ideal nunca necesita recuperar de la swap
+porque cuando se queda sin memoria RAM guarda la primera pagina
+que contiene al array a swap y esta no es accedida nunca mas,
+ademas cuando tiene que acceder a un elemento siempre va a
+estar en memoria va a ser cargado por demand loading.
+
+Una salida ideal seria:
+
+    Swapping: save 750 pages to swap
+    Swapping: recovery 0 pages from swap

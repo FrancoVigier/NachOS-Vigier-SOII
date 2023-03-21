@@ -1,0 +1,16 @@
+Ejercicio 1)
+    Se puede testear con "filesys/nachos -ts".
+Ejercicio 2)
+    Se puede testear con:
+    $ filesys/nachos -cp filesys/test/bigEj3Test test
+    $ filesys/nachos -x shell
+    --> cat test
+
+    El archivo es de 7.4KB, el doble de el minimo maximo tamaño.
+Ejercicio 3)
+    Los archivos se crean con tamaño 0 y se expanden, como pedido, esto se puede testear con
+    "touch a", "write a test test test test" y "cat a" en el shell ($ filesys/nachos -x shell).
+Ejercicio 5)
+    Se pueden testear los espacios de nombre jerarquicos con el "filesys/nachos -td".
+
+Para encontrar archivos y directorios usamos Find(name), para movernos ChangeDir(name) y para listar usamos List().
